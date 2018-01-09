@@ -1,20 +1,69 @@
 import React from 'react';
 import './SearchBar.css';
 
+// move this object to SearchBar constructor?
 const sortByOptions = {
   'Best Match': 'best_match',
   'Highest Rated': 'rating',
   'Most Reviewed': 'review_count'
 };
 
+// this seems like the place for getSortByClass() from the instructions
+// but it checks the state value of sortBy, which doesn't make sense?
+//sortByOptions.getSortByClass = function(sortByOption) {}
+
 class SearchBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      term : '',
+      location : '',
+      sortBy : 'best_match'
+    };
+
+    this.handleTermChange = this.handleTermChange.bind(this);
+    this.handleLocationChange = this.handleLocationChange.bind(this);
+    this.handleSearch = this.handleSearch.bind(this);
+    // instructions suggest that the sortByOption object should have been moved to the constructor
+  }
+  // not sure if this is correct placement of getSortByClass
+  getSortByClass(sortByOption) {
+    if (this.state.sortBy === sortByOption) {
+      return 'active';
+    }
+    else {
+      return '';
+    }
+  }
+
+  handleSortByChange(sortByOption) {
+    this.setState({ sortBy : sortByOption });
+  }
+
+  handleTermChange(event) {
+    this.setState({ term : event.target.value });
+  }
+
+  handleLocationChange(event) {
+    this.setState({ location: event.target.value });
+  }
+
+  handleSearch(event) {
+    this.props.searchYelp(this.state.term, this.state.location, this.state.sortBy);
+    event.preventDefault();
+  }
+
   renderSortByOptions() {
     return Object.keys(sortByOptions).map(sortByOption => {
       let sortByOptionValue;
       sortByOptionValue = sortByOptions[sortByOption];
-      return <li key={sortByOptionValue}>{sortByOption}</li>;
+      return <li
+        className={this.getSortByClass(sortByOptionValue)}
+        onClick={this.handleSortByChange.bind(this,sortByOptionValue)}
+        key={sortByOptionValue}>{sortByOption}</li>;
     });
   }
+
   render() {
     return (
       <div className="SearchBar">
@@ -24,10 +73,10 @@ class SearchBar extends React.Component {
           </ul>
         </div>
         <div className="SearchBar-fields">
-          <input placeholder="Search Businesses" />
-          <input placeholder="Where?" />
+          <input onChange={this.handleTermChange} placeholder="Search Businesses" />
+          <input onChange={this.handleLocationChange} placeholder="Where?" />
         </div>
-        <div className="SearchBar-submit">
+        <div className="SearchBar-submit" onClick={this.handleSearch}>
           <a>{"Let's Go"}</a>
         </div>
       </div>
