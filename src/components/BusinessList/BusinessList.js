@@ -6,7 +6,11 @@ class BusinessList extends React.Component {
   render() {
     return (
       <div className="BusinessList">
-        {this.props.businesses.map(business => <Business business={business}/>)}
+        {
+          // outside of the scope of the lesson, I added the index argument and
+          // key={index} to eliminate a console warning https://reactjs.org/docs/lists-and-keys.html#keys
+          this.props.businesses.map((business) => <Business key={business.id} business={business}/>)
+        }
       </div>
     );
   }
